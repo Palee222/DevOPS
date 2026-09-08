@@ -1,9 +1,5 @@
 # DevOPS
 
-A strong cybersecurity‑themed app can absolutely fit your assignment constraints — as long as it stays monolithic, uses SQLite, has two clean feature domains, and avoids anything requiring external services or background workers. Below is a set of realistic, shippable, DevOps‑friendly ideas that satisfy the assignment while still being meaningful in cybersecurity.
-
----
-
 🎯 Best cybersecurity app idea that fits all constraints
 
 Security Incident Notebook + Password Hygiene Checker
