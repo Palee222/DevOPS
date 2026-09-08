@@ -357,3 +357,351 @@ README essentials
 • python app.py
 
 • Testing:• Command + example coverage output.
+
+
+You’re building something real here—let’s make it feel manageable and clear.
+
+---
+
+Project file structure
+
+Here’s a structure that stays small, readable, and clearly separates the two domains:
+
+secnote/
+├─ app.py
+├─ requirements.txt
+├─ ADR.md
+├─ AI_USAGE.md
+├─ README.md
+├─ data/                # SQLite lives here (DATA_DIR)
+├─ src/
+│  ├─ db.py             # DB connection + table creation
+│  ├─ models.py         # Dataclasses / simple model helpers
+│  ├─ incidents/
+│  │  ├─ routes.py      # HTTP routes for incident domain
+│  │  ├─ service.py     # Business logic (status changes, tags)
+│  │  ├─ repository.py  # SQLite queries for incidents/tags
+│  ├─ password/
+│  │  ├─ routes.py      # HTTP routes for password checker
+│  │  ├─ service.py     # Strength scoring, recommendations
+│  │  ├─ repository.py  # SQLite queries for weak_passwords, rules
+│  ├─ templates/
+│  │  ├─ base.html
+│  │  ├─ incidents_list.html
+│  │  ├─ incident_detail.html
+│  │  ├─ password_check.html
+│  │  ├─ password_rules.html
+│  ├─ static/
+│     ├─ style.css
+├─ tests/
+│  ├─ test_incident_service.py
+│  ├─ test_password_service.py
+│  ├─ conftest.py
+
+
+You can adjust names, but keep the two domains and a shared core (db.py, models.py)—that’s your future microservice seam.
+
+---
+
+Step‑by‑step guide: where to start and what to do
+
+Step 1 — Initialize the repo and basic files
+
+• Create the project folder secnote/ and initialize git.
+• Add:• README.md with a short description and a placeholder “Setup” section.
+• ADR.md with heading only (no entries yet).
+• AI_USAGE.md with the table header from the assignment.
+• requirements.txt (start minimal: fastapi, uvicorn, jinja2, pytest, pytest-cov, sqlite3 is stdlib in Python).
+
+• Make your first commit:• Message: chore: initialize project structure and docs
+
+
+
+This gives you a clean base and starts your commit history.
+
+---
+
+Step 2 — Decide and record your backend stack (ADR‑1)
+
+• Choose: Python + FastAPI (or Flask if you prefer).
+• Implement a tiny app.py:
+
+
+# app.py
+import os
+from fastapi import FastAPI
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from starlette.requests import Request
+import uvicorn
+
+PORT = int(os.getenv("PORT", "8000"))
+
+app = FastAPI()
+templates = Jinja2Templates(directory="src/templates")
+app.mount("/static", StaticFiles(directory="src/static"), name="static")
+
+@app.get("/")
+def home(request: Request):
+    return templates.TemplateResponse("base.html", {"request": request})
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
+
+
+• Add your first ADR entry in ADR.md about backend choice.
+• Commit:• Message: feat: add FastAPI app skeleton and ADR entry for backend choice
+
+
+
+Now you already satisfy part of §7 (single process, PORT, 0.0.0.0).
+
+---
+
+Step 3 — Set up SQLite and data directory
+
+• Create data/ folder.
+• In src/db.py, add:
+
+
+import os
+import sqlite3
+from pathlib import Path
+
+DATA_DIR = os.getenv("DATA_DIR", "data")
+DB_PATH = Path(DATA_DIR) / "secnote.db"
+
+def get_connection():
+    Path(DATA_DIR).mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    conn = get_connection()
+    cur = conn.cursor()
+    # incidents
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS incidents (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            severity TEXT NOT NULL,
+            status TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
+    """)
+    # tags
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS tags (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE
+        );
+    """)
+    # incident_tags
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS incident_tags (
+            incident_id INTEGER NOT NULL,
+            tag_id INTEGER NOT NULL,
+            FOREIGN KEY (incident_id) REFERENCES incidents(id),
+            FOREIGN KEY (tag_id) REFERENCES tags(id)
+        );
+    """)
+    # weak_passwords
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS weak_passwords (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            password TEXT NOT NULL,
+            source TEXT
+        );
+    """)
+    # password_rules
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS password_rules (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            description TEXT,
+            min_length INTEGER,
+            require_upper INTEGER,
+            require_lower INTEGER,
+            require_digit INTEGER,
+            require_symbol INTEGER
+        );
+    """)
+    conn.commit()
+    conn.close()
+
+
+• Call init_db() from app.py at startup.
+• Commit:• Message: feat: add SQLite initialization and schema
+
+
+
+Later, this schema will feed your database diagram and ADR‑3.
+
+---
+
+Step 4 — Design and record domain separation (ADR‑2)
+
+• In ADR.md, add entry describing:• Context: need two separable domains.
+• Decision: incidents vs password hygiene.
+• Alternatives: single “security dashboard” domain.
+• Consequences: clear microservice seam.
+
+• Commit:• Message: docs: add ADR entry for domain separation
+
+
+
+This is directly aligned with §3 and §5.
+
+---
+
+Step 5 — Implement incident domain (repository + service + routes)
+
+5.1 Repository (`src/incidents/repository.py`)
+
+• Functions like:• create_incident(...)
+• list_incidents(filters)
+• get_incident_by_id(id)
+• update_incident_status(id, new_status)
+• add_tags_to_incident(incident_id, tag_names)
+
+
+
+These should use get_connection() from db.py.
+
+5.2 Service (`src/incidents/service.py`)
+
+• Implement business rules:• Allowed severities: ["low", "medium", "high", "critical"].
+• Allowed status transitions: e.g. open → investigating → resolved.
+• Tag creation if not exists.
+
+
+
+This is where your core logic lives—perfect for tests.
+
+5.3 Routes (`src/incidents/routes.py`)
+
+• FastAPI endpoints:• GET /incidents
+• GET /incidents/{id}
+• POST /incidents
+• POST /incidents/{id}/status
+
+
+
+Wire them into app.py via include_router.
+
+• Commit:• Message: feat: add incident domain repository, service, and routes
+
+
+
+---
+
+Step 6 — Implement password domain (repository + service + routes)
+
+6.1 Repository (`src/password/repository.py`)
+
+• Functions:• get_weak_passwords()
+• seed_weak_passwords() (called once at startup if table empty)
+• get_password_rules()
+• seed_default_rules()
+
+
+
+6.2 Service (`src/password/service.py`)
+
+• Implement score_password(password: str) -> dict:• Check length vs min_length.
+• Check presence of upper/lower/digit/symbol.
+• Check if in weak_passwords.
+• Return:• score (0–100)
+• category ("weak", "medium", "strong")
+• recommendations (list of strings).
+
+
+
+
+This is your testing goldmine.
+
+6.3 Routes (`src/password/routes.py`)
+
+• Endpoints:• GET /password/check → form page.
+• POST /password/check → process password, show result.
+• GET /password/rules → show rules.
+
+• Commit:• Message: feat: add password hygiene domain with scoring logic and routes
+
+---
+
+Step 7 — Add templates and basic UI
+
+• Create src/templates/base.html with a simple layout and navigation.
+• Create:• incidents_list.html
+• incident_detail.html
+• password_check.html
+• password_rules.html
+
+Keep them simple—this assignment cares more about logic and process than fancy UI.
+
+• Commit:• Message: feat: add HTML templates for incidents and password checker
+
+---
+
+Step 8 — Add tests and reach ≥70% coverage
+
+8.1 Install and configure testing
+
+• Ensure pytest and pytest-cov are in requirements.txt.
+• In tests/test_password_service.py, write tests for:• Short password → low score, “weak”.
+• Long, mixed‑char password → high score, “strong”.
+• Password in weak_passwords → forced low score.
+
+• In tests/test_incident_service.py, test:• Valid status transitions.
+• Invalid transitions raise error.
+• Severity validation.
+
+8.2 Run coverage
+
+• Command (document this in README.md):
+
+pytest --cov=src --cov-report=term-missing
+
+• Adjust tests until you hit ≥70%.
+• Commit:• Message: test: add unit tests for incident and password services with coverage
+
+---
+
+Step 9 — Fill ADR‑3, ADR‑4, ADR‑5 over time
+
+• ADR‑3 (data model):• Explain why you chose normalized tables and join table for tags.
+
+• ADR‑4 (testing approach):• Explain focus on business logic vs routing.
+
+• ADR‑5 (deliberately not built):• E.g. “no external breach API, no background jobs”.
+
+Make sure these land on different commit dates.
+
+• Commit messages like:• docs: add ADR entry for SQLite schema
+• docs: add ADR entry for testing strategy
+• docs: add ADR entry for omitted features
+
+---
+
+Step 10 — Update README and AI_USAGE.md
+
+• README:• Setup steps:• Create venv, install requirements.
+• Set PORT and DATA_DIR (or rely on defaults).
+• Run python app.py.
+
+• Testing section with coverage command + example output.
+• Short description of the two domains.
+
+• AI_USAGE.md:• For each time you used AI meaningfully, add a row:• Date/commit
+• Tool (e.g. “Copilot”)
+• Prompt
+• Disposition
+• What changed & why
+• In your own words, how the code works.
+
+
+• Commit:• Message: docs: update README with setup and tests, log AI usage
