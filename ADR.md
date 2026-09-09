@@ -18,3 +18,11 @@ Any pattern beyond the basics (GraphQL, WebSockets, in-process background task, 
 Frontend approach: plain HTML/CSS/JS, templates, or heavier, served by the same process.
 Dependency count: soft cap ~12 third-party packages.
 File count: rough guidance ~15-50 files (excluding lockfiles/venvs/node_modules).
+
+One entry required for each:
+
+Backend language/framework choice: the justification from §1b (what it buys you, what you rejected).
+How you scoped your two feature domains to be independently modularizable.
+A data-model/schema decision in SQLite: e.g. how the two domains' data relates. Should visually match the database diagram in §8.
+Your testing approach: what you prioritized toward the 70% bar, what you left thinner, and why.
+One thing you deliberately chose not to build, and why.
