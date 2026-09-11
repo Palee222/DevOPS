@@ -1,15 +1,22 @@
-import os
+import os 
+#Imports Python’s built-in operating system module, used to read environment variables and manage file paths.
 import sqlite3
+#Imports the SQLite database library, which lets Python connect to and work with SQLite databases.
 from pathlib import Path
+#makes it easier to work with file and folder paths
 
 DATA_DIR = os.getenv("DATA_DIR", "data")
+#Reads the environment variable DATA_DIR. If it is not set, it defaults to the folder name "data".
 DB_PATH = Path(DATA_DIR) / "secnote.db"
+#Builds the full path to the database file: a folder named data (or whatever DATA_DIR is)
 
 def get_connection():
-    Path(DATA_DIR).mkdir(parents=True, exist_ok=True)
+    Path(DATA_DIR).mkdir(parents=True, exist_ok=True) #Creates the data directory if it does not already exis
     conn = sqlite3.connect(DB_PATH)
+    #Opens a connection to the SQLite database at DB_PATH.
     conn.row_factory = sqlite3.Row
-    return conn
+    #Tells SQLite to return rows as dictionary-like objects instead of plain tuples. This makes data access easier.
+    return conn #Returns the open database connection so other functions can use it.
 
 def init_db():
     conn = get_connection()
@@ -63,5 +70,5 @@ def init_db():
             require_symbol INTEGER
         );
     """)
-    conn.commit()
-    conn.close()
+    conn.commit() #Saves all the SQL changes made so far to the database.
+    conn.close() #Closes the connection properly when the setup is finished.
