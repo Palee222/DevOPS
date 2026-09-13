@@ -4,13 +4,15 @@ Date: 2026-10-DD
 
 Status: Decided
 
-Context: I have been interested in cybersecurity for a while and I tought this is the right time to start doing something towards that interest. So, I decided something that seems easy, but is very hard for me as there are many things I don't know as I have never done such a project alone. Also, the other reason why I do this project is I have had some security issues and would like to keep it more organized.
+Context: For this assignment I need two separable domains to work with. Which will be an incident logbook and a password hygiene checker so companies/individuals can keep track of their security. Also, both both support security management while addressing different needs.
 
-Decision: I have chosen a security incident notebook combined with a password hygiene checker which can be used by smaller firms or individuals.
+I have been interested in cybersecurity for a while and I tought this is the right time to start doing something towards that interest. So, I decided something that seems easy, but is very hard for me as there are many things I don't know as I have never done such a project alone. Also, the other reason why I do this project is I have had some security issues and would like to keep it more organized.
 
-Alternatives considered: at least one real alternative, and why you rejected it
+Decision: I have chosen a security incident notebook combined with a password hygiene checker which can be used by smaller firms or individuals since this will be light weight. The incident logbook allows users to record, track, and review security incidents, while the password hygiene checker evaluates password quality without storing the passwords themselves.
 
-Consequences: 1-2 sentences, what this costs or enables later
+Alternatives considered: I have considered making this in one domain, however I wanted to make sure that the two functions are clearly separable and won't be any conflicts or unnecessary dependencies when the application is running.
+
+Consequences: This 2 domain solution enables that the domains can run smoothly without any serious conflicts. The application will not replace a full enterprise security platform as it is intended as a lightweight tool for individuals and small organisations.
 
 Backend language/framework: explain why you chose it and what it buys you. Example: using Django when nothing needs it over Flask/FastAPI is graded down as poor judgment, not banned. the justification from §1b (what it buys you, what you rejected). How you scoped your two feature domains to be independently modularizable.
 

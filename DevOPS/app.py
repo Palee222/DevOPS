@@ -1,4 +1,5 @@
 #small fastapi web server
+#app.py for FastAPI routes
 import os
 from pathlib import Path #helps create reliable file and folder paths.
 
@@ -7,6 +8,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates #loads HTML files and can insert dynamic data into them.
 from starlette.requests import Request
 import uvicorn #the server that runs your FastAPI application.
+
+from db import init_db
+from incidents.routes import router as incidents_router
 
 BASE_DIR = Path(__file__).resolve().parent #This finds the folder containing app.py
 '''
@@ -24,6 +28,7 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "src" / "templates"))
 #Static files are mounted, This line makes /static serve files from a folder:
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "src" / "static")), name="static") #Configuring static files
 
+app.include_router(incidents_router)
 
 #The route is defined using the @app.get("/") decorator, which means that this function will be called when a GET request is made to the root URL ("/") of the application.
 #Defining the homepage
