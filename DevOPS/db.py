@@ -21,6 +21,7 @@ def get_connection():
 def init_db():
     conn = get_connection()
     cur = conn.cursor()
+    #tables get created if they do not already exist
     # incidents
     cur.execute("""
         CREATE TABLE IF NOT EXISTS incidents (
