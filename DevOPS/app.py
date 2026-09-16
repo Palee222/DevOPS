@@ -11,6 +11,8 @@ import uvicorn #the server that runs your FastAPI application.
 
 from db import init_db
 from incidents.routes import router as incidents_router
+from password.routes import router as password_router
+from password.repository import seed_weak_passwords
 
 BASE_DIR = Path(__file__).resolve().parent #This finds the folder containing app.py
 '''
@@ -29,6 +31,7 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "src" / "templates"))
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "src" / "static")), name="static") #Configuring static files
 
 app.include_router(incidents_router)
+app.include_router(password_router)
 
 #The route is defined using the @app.get("/") decorator, which means that this function will be called when a GET request is made to the root URL ("/") of the application.
 #Defining the homepage
@@ -46,6 +49,7 @@ So when you open: http://localhost:8001/ the function runs and returns the HTML 
 
 if __name__ == "__main__":
     init_db() #initialize SQLite before starging the server
+    print(seed_weak_passwords())
     uvicorn.run(app, host="0.0.0.0", port=PORT) #This line starts the server:
 
 

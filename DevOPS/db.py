@@ -18,6 +18,25 @@ def get_connection():
     #Tells SQLite to return rows as dictionary-like objects instead of plain tuples. This makes data access easier.
     return conn #Returns the open database connection so other functions can use it.
 
+def insert(table, values):
+    columns = ", ".join(values)
+    placeholders = ", ".join("?" for _ in values)
+    conn = get_connection()
+    try:
+        cur = conn.execute(
+            f"INSERT INTO {table} ({columns}) VALUES ({placeholders})",
+            tuple(values.values()),
+        )
+        conn.commit()
+        if cur.lastrowid is None:
+            raise RuntimeError(f"The {table} record was not inserted.")
+        return cur.lastrowid
+    except sqlite3.Error as error:
+        conn.rollback()
+        raise RuntimeError(f"Could not insert into {table}: {error}") from error
+    finally:
+        conn.close()
+
 def init_db():
     conn = get_connection()
     cur = conn.cursor()

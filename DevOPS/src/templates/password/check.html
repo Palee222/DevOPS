@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Password Check</title>
+</head>
+<body>
+  <h1>Check password strength</h1>
+
+  <form method="post" action="/password/check">
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" required />
+    <button type="submit">Check password</button>
+  </form>
+
+  {% if result %}
+  <section aria-labelledby="result-heading">
+    <h2 id="result-heading">Result</h2>
+    <p>Score: {{ result.score }}/100</p>
+    <p>Strength: {{ result.strength }}</p>
+
+    {% if result.feedback %}
+    <h3>Suggestions</h3>
+    <ul>
+      {% for item in result.feedback %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>This password meets all current checks.</p>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <p><a href="/password/rules">View password rules</a></p>
+</body>
+</html>
