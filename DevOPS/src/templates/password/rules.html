@@ -1,23 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Password Rules</title>
-</head>
-<body>
-  <h1>{{ rules.name }}</h1>
-  <p>{{ rules.description }}</p>
+{% extends "base.html" %}
 
-  <h2>Requirements</h2>
-  <ul>
-    <li>At least {{ rules.min_length }} characters</li>
-    {% if rules.require_upper %}<li>At least one uppercase letter</li>{% endif %}
-    {% if rules.require_lower %}<li>At least one lowercase letter</li>{% endif %}
-    {% if rules.require_digit %}<li>At least one digit</li>{% endif %}
-    {% if rules.require_symbol %}<li>At least one special character</li>{% endif %}
-  </ul>
+{% block title %}Password rules — secnote{% endblock %}
 
-  <p><a href="/password/check">Check a password</a></p>
-</body>
-</html>
+{% block content %}
+<h1>{{ rules.name }}</h1>
+<p class="lede">{{ rules.description }}</p>
+
+<h2>Requirements</h2>
+<ul class="requirements">
+  <li>At least {{ rules.min_length }} characters</li>
+  {% if rules.require_upper %}<li>At least one uppercase letter</li>{% endif %}
+  {% if rules.require_lower %}<li>At least one lowercase letter</li>{% endif %}
+  {% if rules.require_digit %}<li>At least one digit</li>{% endif %}
+  {% if rules.require_symbol %}<li>At least one special character</li>{% endif %}
+  <li>Not on the list of commonly breached passwords</li>
+</ul>
+
+<p><a href="/password/check">Check a password</a></p>
+{% endblock %}

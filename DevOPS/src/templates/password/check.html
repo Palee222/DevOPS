@@ -1,38 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Password Check</title>
-</head>
-<body>
-  <h1>Check password strength</h1>
+{% extends "base.html" %}
 
-  <form method="post" action="/password/check">
-    <label for="password">Password</label>
-    <input id="password" name="password" type="password" required />
-    <button type="submit">Check password</button>
-  </form>
+{% block title %}Check a password — secnote{% endblock %}
 
-  {% if result %}
-  <section aria-labelledby="result-heading">
-    <h2 id="result-heading">Result</h2>
-    <p>Score: {{ result.score }}/100</p>
-    <p>Strength: {{ result.strength }}</p>
+{% block content %}
+<h1>Check password strength</h1>
 
-    {% if result.feedback %}
-    <h3>Suggestions</h3>
-    <ul>
-      {% for item in result.feedback %}
-      <li>{{ item }}</li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p>This password meets all current checks.</p>
-    {% endif %}
-  </section>
+<form method="post" action="/password/check" class="check-form">
+  <label for="password">Password</label>
+  <input id="password" name="password" type="password" required autocomplete="off" />
+  <button type="submit">Check password</button>
+</form>
+
+{% if result %}
+<section class="result" aria-labelledby="result-heading">
+  <h2 id="result-heading">Result</h2>
+
+  <p class="score"><strong>{{ result.score }}</strong><span>/100 · {{ result.strength }}</span></p>
+
+  <div class="meter" role="img" aria-label="Score {{ result.score }} out of 100">
+    <div class="meter-fill" style="width: {{ result.score }}%"></div>
+  </div>
+
+  {% if result.feedback %}
+  <h3>What to change</h3>
+  <ul class="feedback">
+    {% for item in result.feedback %}
+    <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>This password meets every rule in the current policy.</p>
   {% endif %}
-
-  <p><a href="/password/rules">View password rules</a></p>
-</body>
-</html>
+</section>
+{% endif %}
+{% endblock %}
