@@ -31,3 +31,5 @@ src/templates/
     password/rules.html
     
 src/static/
+
+To run pytests use the following command: pytest --cov=src --cov-report=term-missing
