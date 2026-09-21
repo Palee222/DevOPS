@@ -4,12 +4,14 @@ import sqlite3
 #Imports the SQLite database library, which lets Python connect to and work with SQLite databases.
 from pathlib import Path
 #makes it easier to work with file and folder paths
+from contextlib import contextmanager
 
 DATA_DIR = os.getenv("DATA_DIR", "data")
 #Reads the environment variable DATA_DIR. If it is not set, it defaults to the folder name "data".
 DB_PATH = Path(DATA_DIR) / "secnote.db"
 #Builds the full path to the database file: a folder named data (or whatever DATA_DIR is)
 
+@contextmanager
 def get_connection():
     Path(DATA_DIR).mkdir(parents=True, exist_ok=True) #Creates the data directory if it does not already exis
     conn = sqlite3.connect(DB_PATH)

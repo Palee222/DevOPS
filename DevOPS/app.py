@@ -1,18 +1,19 @@
 #small fastapi web server
 #app.py for FastAPI routes
 import os
-from pathlib import Path #helps create reliable file and folder paths.
-
-from fastapi import FastAPI #the framework used to create the web application
+from contextlib import asynccontextmanager
+from pathlib import Path
+ 
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates #loads HTML files and can insert dynamic data into them.
+from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
-import uvicorn #the server that runs your FastAPI application.
-
+import uvicorn
+ 
 from db import init_db
 from incidents.routes import router as incidents_router
+from password.repository import seed_default_rules, seed_weak_passwords
 from password.routes import router as password_router
-from password.repository import seed_weak_passwords
 
 BASE_DIR = Path(__file__).resolve().parent #This finds the folder containing app.py
 '''
