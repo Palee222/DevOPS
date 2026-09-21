@@ -32,4 +32,7 @@ src/templates/
     
 src/static/
 
-To run pytests use the following command: ./.venv/bin/python -m pytest \ --cov=src.password.service \ --cov=src.incidents.service \ --cov-report=term-missing
+To run pytests use the following command:./.venv/bin/python -m pytest \
+  --cov=incidents.service \
+  --cov=src.password.service \
+  --cov-report=term-missing
