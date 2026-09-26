@@ -14,30 +14,35 @@ db.py                   ← SQLite connection + schema
 incidents/
 
     repository.py       ← SQL for incidents
-    
+
     routes.py           ← /incidents endpoints
-    
+
     service.py          ← allowed severity/status values
-    
+
 password/
 
     repository.py       ← weak-password list + rules
-    
+
     routes.py           ← /password endpoints
-    
+
     service.py          ← scoring algorithm
-    
+
 src/templates/
 
     base.html
-    
+
     password/check.html
-    
+
     password/rules.html
-    
+
 src/static/
 
 To run pytests use the following command:./.venv/bin/python -m pytest \
   --cov=incidents.service \
   --cov=src.password.service \
   --cov-report=term-missing
+
+  python3 -m venv .venv
+  source .venv/bin/activate
+  python -m pip install -r requirements.txt
+  python app.py
