@@ -1,75 +1,89 @@
-#routes.py for endpoint logic
+"""service.py for the incidents business logic.
 
-severity_levels = ["Low", "Medium", "High", "Critical"]
-status_levels = ["Open", "In Progress", "Resolved", "Closed"]
-strength_levels = ["Weak", "Moderate", "Strong", "Very Strong"]
+The allowed severity and status values live here, and so does the validation
+that uses them. Routes translate the errors raised here into HTTP responses;
+the repository stays a thin SQL layer.
+"""
 
-def score_password(password: str) -> dict:
-    """
-    Score the strength of a password on a 0-100 scale.
-    strength is determined by length, character variety, and complexity.
-    Args:
-        password (str): The password to be scored.
+from typing import Literal
 
-    Returns:
-        dict: A dictionary containing the password score, strength level, and feedback.
-    """
-    score = 0
-    feedback = []
-    special_characters = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~"
+from incidents import repository
 
-    # Length scoring: 0 to 30
-    if len(password) < 8:
-        feedback.append("Password is too short. Minimum length is 8 characters.")
-    elif len(password) < 12:
-        score += 20
-        feedback.append("Password length is acceptable but could be longer.")
-    else:
-        score += 30
+Severity = Literal["Low", "Medium", "High", "Critical"]
+Status = Literal["Open", "In Progress", "Resolved", "Closed"]
 
-    # Uppercase: 0 to 15
-    if any(char.isupper() for char in password):
-        score += 15
-    else:
-        feedback.append("Password should include at least one uppercase letter.")
+SEVERITY_LEVELS = ["Low", "Medium", "High", "Critical"]
+STATUS_LEVELS = ["Open", "In Progress", "Resolved", "Closed"]
 
-    # Lowercase: 0 to 15
-    if any(char.islower() for char in password):
-        score += 15
-    else:
-        feedback.append("Password should include at least one lowercase letter.")
+# Kept for backwards compatibility with the original lowercase names.
+severity_levels = SEVERITY_LEVELS
+status_levels = STATUS_LEVELS
 
-    # Digits: 0 to 15
-    if any(char.isdigit() for char in password):
-        score += 15
-    else:
-        feedback.append("Password should include at least one digit.")
 
-    # Special characters: 0 to 15
-    if any(char in special_characters for char in password):
-        score += 15
-    else:
-        feedback.append("Password should include at least one special character.")
+class ValidationError(ValueError):
+    """Raised when incoming data fails a business rule."""
 
-    # Bonus for longer passwords: 0 to 10
-    if len(password) >= 16:
-        score += 10
 
-    # Cap the score at 100
-    score = min(score, 100)
+class NotFoundError(LookupError):
+    """Raised when an incident id does not exist."""
 
-    # Map score to strength level
-    if score < 40:
-        level = "Weak"
-    elif score < 70:
-        level = "Moderate"
-    elif score < 90:
-        level = "Strong"
-    else:
-        level = "Very Strong"
 
-    return {
-        "score": score,
-        "strength": level,
-        "feedback": feedback
-    }
+def validate_severity(severity):
+    if severity not in SEVERITY_LEVELS:
+        raise ValidationError(
+            f"Severity must be one of: {', '.join(SEVERITY_LEVELS)}."
+        )
+    return severity
+
+
+def validate_status(status):
+    if status not in STATUS_LEVELS:
+        raise ValidationError(
+            f"Status must be one of: {', '.join(STATUS_LEVELS)}."
+        )
+    return status
+
+
+def create_incident(title, description, severity, status="Open", tags=None):
+    title = title.strip()
+    description = description.strip()
+    if not title:
+        raise ValidationError("Title cannot be empty.")
+    if not description:
+        raise ValidationError("Description cannot be empty.")
+
+    validate_severity(severity)
+    validate_status(status)
+
+    incident_id = repository.create_incident(title, description, severity, status)
+
+    if tags:
+        repository.add_tags_to_incident(incident_id, tags)
+
+    return get_incident(incident_id)
+
+
+def list_incidents():
+    return repository.list_incidents()
+
+
+def get_incident(incident_id):
+    incident = repository.get_incident_by_id(incident_id)
+    if incident is None:
+        raise NotFoundError(f"No incident with id {incident_id}.")
+    incident["tags"] = repository.get_tags_for_incident(incident_id)
+    return incident
+
+
+def update_status(incident_id, status):
+    validate_status(status)
+    updated = repository.update_incident(incident_id, new_status=status)
+    if updated is None:
+        raise NotFoundError(f"No incident with id {incident_id}.")
+    return get_incident(incident_id)
+
+
+def add_tags(incident_id, tags):
+    get_incident(incident_id)  # raises NotFoundError if the incident is gone
+    repository.add_tags_to_incident(incident_id, tags)
+    return repository.get_tags_for_incident(incident_id)

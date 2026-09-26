@@ -40,7 +40,7 @@ app.include_router(password_router)
 def home(request: Request): #request contains the browser request information
     return templates.TemplateResponse( #TemplateResponse loads the HTML template file base.html
         request=request,
-        name="base.html",
+        name="home.html",
         context={"request": request}, #the browser gets the rendered HTML page back
     )
 '''

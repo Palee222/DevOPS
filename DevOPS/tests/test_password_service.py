@@ -1,4 +1,4 @@
-from src.password.service import score_password
+from password.service import score_password
 
 
 def test_short_password_is_weak():
