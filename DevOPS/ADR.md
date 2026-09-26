@@ -1,6 +1,6 @@
 ## Security Incident Notebook + Password Hygiene Checker
 
-Date: 2026-10-DD
+Date: 2026-10-04
 
 Status: Decided
 
@@ -15,16 +15,14 @@ Alternatives considered: I have considered making this in one domain, however I 
 Consequences: This 2 domain solution enables that the domains can run smoothly without any serious conflicts. The application will not replace a full enterprise security platform as it is intended as a lightweight tool for individuals and small organisations.
 
 Backend language/framework: explain why you chose it and what it buys you. Example: using Django when nothing needs it over Flask/FastAPI is graded down as poor judgment, not banned. the justification from §1b (what it buys you, what you rejected). How you scoped your two feature domains to be independently modularizable.
+  * So I have chosen to code my project in python as for me who is not a proficient coder, this language makes everything a bit easier.
+  * In addition I have decided to choose FastAPI as it is light weight and perfect for smaller companies.
 
-Whether to add authentication/login.
+Whether to add authentication/login. -> No authentication or login added yet. That will be added in the next phase if needed.
 
-Any pattern beyond the basics (GraphQL, WebSockets, in-process background task, heavier ORM), as long as it fits the single-process constraint.
+Any pattern beyond the basics (GraphQL, WebSockets, in-process background task, heavier ORM), as long as it fits the single-process constraint. -> None of these
 
-Frontend approach: plain HTML/CSS/JS, templates, or heavier, served by the same process.
-
-Dependency count: soft cap ~12 third-party packages.
-
-File count: rough guidance ~15-50 files (excluding lockfiles/venvs/node_modules).
+Frontend approach: plain HTML/CSS/JS, templates, or heavier, served by the same process. -> I have used HTML and CSS
 
 One entry required for each:
 
