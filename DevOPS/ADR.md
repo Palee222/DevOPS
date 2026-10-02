@@ -51,27 +51,39 @@ without using 100% AI to write my assignment.
 Date: 2026-09-25
 Status: Decided
 Context: I had to decide on how to set up the password hygiene checker. How to create a database and the rules to make a decent code for the assignment
-Decision: 1-2 sentences, what you chose
-Alternatives considered: at least one real alternative, and why you rejected it
-Consequences: 1-2 sentences, what this costs or enables later
+Decision:
+* I have set the rules like "it must contain a set of uppercase letters" and I have set one set of weak password examples
+* Then I have set up a scoring algorithm to have feedback for the user from 0-100 and to see if they should be changing their passwords.
+Alternatives considered:
+* Honestly I did not really consider any alternatives as it was clear for me what I wanted to do from the beginning.
+Consequences:
+* What my solution costs is that it may have some flaws so users may be able to bypass my password rules.
+* So as it gets tested by real human users, I may need to fix those issues.
+* Also, hacking safe as that is my main area of interest. I might do that later on outside of this individual project.
 
 Backend language/framework choice: the justification from §1b (what it buys you, what you rejected).
-A data-model/schema decision in SQLite: e.g. how the two domains' data relates. Should visually match the database diagram in §8.
 Your testing approach: what you prioritized toward the 70% bar, what you left thinner, and why.
+* I have definitely prioritized to cover as much weak passwords as possible to test it as well as possible.
+* Also, I tested for strong passwords and other different ones to see if they are good for the rules I have set and wether there are any issues.
 One thing you deliberately chose not to build, and why.
+* A frontend myself because it can be done much nicer by someone else who has better visualization skill and AI can also do sufficient job on designing a simple one.
 
 4. Frontend design
 Date: 2026-09-27
 Status: Decided
-Context: 1-3 sentences, what forced this decision
-Decision: 1-2 sentences, what you chose
-Alternatives considered: at least one real alternative, and why you rejected it
-Consequences: 1-2 sentences, what this costs or enables later
-
-Backend language/framework choice: the justification from §1b (what it buys you, what you rejected).
-A data-model/schema decision in SQLite: e.g. how the two domains' data relates. Should visually match the database diagram in §8.
+Context:
+* I will be honest here. I have done a website in highschool last time in html and I cannot make great websites nowaday.
+* So I decided to ask an AI to make me one that looks alright for my idea and is simple enough for me to understand and be able to explain it.
+Decision:
+* I decided to accept it as it looked great, simple enough and can easly be connected to my backend part.
+Alternatives considered:
+* I have considered coding the whole website myself, however I had to reject it because I did not know where to start, what tools I have available, due to the lack of knowledge in HTML CSS JS and I did not know how to connect it to my backend.
+Consequences:
+* I am aware that this decision costs me in a way that the website is not very flexible to changes and expansion in the future.
 Your testing approach: what you prioritized toward the 70% bar, what you left thinner, and why.
+* Still in progress of constant testing.
 One thing you deliberately chose not to build, and why.
+* A frontend myself because it can be done much nicer by someone else who has better visualization skill and AI can also do sufficient job on designing a simple one.
 
 5. Report writing content
 Date: 2026-10-01
