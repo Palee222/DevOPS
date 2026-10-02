@@ -37,14 +37,13 @@ src/templates/
 
 src/static/
 
-To run pytests use the following command:./.venv/bin/python -m pytest \
-  --cov=incidents.service \
-  --cov=src.password.service \
-  --cov-report=term-missing
-
-  python3 -m venv .venv
-  source .venv/bin/activate
-  python -m pip install -r requirements.txt
-  python app.py
-
-To run frontend locally: bun install (or npm install) and bun run dev. Point it at your FastAPI backend from the Connection page.
+Starting up the things:
+- Backend:
+   - python3 -m venv .venv
+      source .venv/bin/activate
+      python -m pip install -r requirements.txt
+      python app.py
+- Frontend
+   - cd DevOPS/secnote-frontend
+      npm install
+      npm run dev
