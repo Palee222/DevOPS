@@ -1,6 +1,6 @@
 ## Security Incident Notebook + Password Hygiene Checker
-
-Date: 2026-10-04
+1. Initial ideas
+Date: 2026-09-21
 
 Status: Decided
 
@@ -22,11 +22,60 @@ Whether to add authentication/login. -> No authentication or login added yet. Th
 
 Any pattern beyond the basics (GraphQL, WebSockets, in-process background task, heavier ORM), as long as it fits the single-process constraint. -> None of these
 
-Frontend approach: plain HTML/CSS/JS, templates, or heavier, served by the same process. -> I have used HTML and CSS
+Frontend approach: plain HTML/CSS/JS, templates, or heavier, served by the same process. -> I have used HTML, Javascript and CSS. I have kept it simple and easy to do as my focus is not frontend for this project.
 
-One entry required for each:
+2. Incident log
+Date: 2026-09-23
+Status: Decided
+Context:
+* I have decided on an SQLite based incident log because it can be easily handled and data can be easily retrieved if needed for further actions.
+Decision:
+* I have chosen to handle different severity levels.
+Alternatives considered:
+* I would have chosen to make the database with Django and SQL but since it was not recommended in the assignment I did not go with it.
+* Also, I like to learn about new methods. :)
+Consequences: 1-2 sentences, what this costs or enables later
+* It enables expansion for later.
 
+Backend language/framework choice: the justification from §1b (what it buys you, what you rejected).
+* I have just simply used FastAPI, SQLite and python.
+* I have chosen this as I explained earlier I decided on using this framework because it is light weight and can be easly ran on a computer or smaller server
 A data-model/schema decision in SQLite: e.g. how the two domains' data relates. Should visually match the database diagram in §8.
+* So the model I made for the incident log is
+One thing you deliberately chose not to build, and why.
+* An overly complex database and code because my goal is to make sure that with my very low level of knowledge I can build something that lives up to the assignment and I can understand it too
+without using 100% AI to write my assignment.
+* So I wanted to make sure that I actually learn from this assignment.
 
+3. Password hygiene setup
+Date: 2026-09-25
+Status: Decided
+Context: I had to decide on how to set up the password hygiene checker. How to create a database and the rules to make a decent code for the assignment
+Decision: 1-2 sentences, what you chose
+Alternatives considered: at least one real alternative, and why you rejected it
+Consequences: 1-2 sentences, what this costs or enables later
+
+Backend language/framework choice: the justification from §1b (what it buys you, what you rejected).
+A data-model/schema decision in SQLite: e.g. how the two domains' data relates. Should visually match the database diagram in §8.
 Your testing approach: what you prioritized toward the 70% bar, what you left thinner, and why.
 One thing you deliberately chose not to build, and why.
+
+4. Frontend design
+Date: 2026-09-27
+Status: Decided
+Context: 1-3 sentences, what forced this decision
+Decision: 1-2 sentences, what you chose
+Alternatives considered: at least one real alternative, and why you rejected it
+Consequences: 1-2 sentences, what this costs or enables later
+
+Backend language/framework choice: the justification from §1b (what it buys you, what you rejected).
+A data-model/schema decision in SQLite: e.g. how the two domains' data relates. Should visually match the database diagram in §8.
+Your testing approach: what you prioritized toward the 70% bar, what you left thinner, and why.
+One thing you deliberately chose not to build, and why.
+
+5. Report writing content
+Date: 2026-10-01
+Status: Decided
+Context: What was already in other documentation and what can I write to report
+Decision: I chose to include everything and put AI disclaimers first.
+Alternatives considered: None
