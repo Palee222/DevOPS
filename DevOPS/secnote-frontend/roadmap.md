@@ -1,3 +1,0 @@
-- [x] Inspect the public DevOPS backend's incident and password features.
-- [x] Design and implement a professional frontend for those workflows.
-- [ ] Connect to a running backend (blocked: no deployed backend URL or CORS configuration supplied).
