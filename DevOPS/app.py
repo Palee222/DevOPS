@@ -15,6 +15,8 @@ from incidents.routes import router as incidents_router
 from password.repository import seed_default_rules, seed_weak_passwords
 from password.routes import router as password_router
 
+from fastapi.middleware.cors import CORSMiddleware
+
 BASE_DIR = Path(__file__).resolve().parent #This finds the folder containing app.py
 '''
 __file__ is the path to the current Python file
@@ -26,6 +28,12 @@ PORT = int(os.getenv("PORT", "8000"))
 app = FastAPI() #creates the web application, object stores your routes and handles incoming browser requests
 #FastAPI is a Python framework that handles HTTP requests and responses.
 #This tells FastAPI/Jinja2 where your HTML files live or where to look for them. The directory is set to the templates folder inside the src folder.:
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 templates = Jinja2Templates(directory=str(BASE_DIR / "src" / "templates"))
 
 #Static files are mounted, This line makes /static serve files from a folder:
